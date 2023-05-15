@@ -1,8 +1,25 @@
 const models = require('../utils/allModels');
+const jwt = require('jsonwebtoken')
+const trade_secret = "MY_SECRET_KEY"
 
+exports.UserLogin = async (req, res, next) => {
+  try {
+    console.log('here');
+      const user = req.body;
+      const token = jwt.sign({ name: user.name, mobilenumber: user.mobilenumber, password: user.password , Dateofbirth : user.Dateofbirth , Gender : user.Gender },trade_secret);
+      return res.json({
+          message: "Login Successfully",
+          name: user.name,
+          token: token
+      })
+  } catch (err) {
+      return res.status(404).json({ error: err.message })
+  }
+}
 
 exports.adduser = async (req ,res) =>{
-    const { name , mobilenumber , password ,Dateofbirth , Gender } = req.body;
+  console.log('here');
+    const { name  ,mobilenumber, password ,Dateofbirth , Gender } = req.body;
     const addClause =  {
         name: name,
         mobilenumber: mobilenumber,
@@ -11,10 +28,9 @@ exports.adduser = async (req ,res) =>{
         Gender : Gender
       };
 
-      
     const getUser =  await models.user_Model.findOne({
         where: {
-          mobilenumber: mobilenumber,
+          mobilenumber: mobilenumber
         }
       })
 
